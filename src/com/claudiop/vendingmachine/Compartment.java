@@ -28,42 +28,52 @@ public class Compartment {
     final private int capacity;
     private boolean hasProduct;
 
+    //FIXME, Either make use of this constructor or remove it
     public Compartment(int capacity) {
         this("Undefined", 0, 0, capacity);
     }
 
     public Compartment(String product, int price, int stock, int capacity) {
-        this.name = product;
-        this.price = price;
-        this.stock = stock;
-        this.capacity = capacity;
-        this.hasProduct = !this.name.equals("Undefined");
+        this.name = product.trim().equals("") || product == null ? "Undefined" : product;
+        this.price = price > 0 ? price : 0;
+        //TODO validate price < 10€ in the VendingMachine as it is not specific to the Compartment
+        this.capacity = capacity > 0 ? capacity : 0;
+        if (stock > capacity) {
+            this.stock = capacity;
+            System.out.println("Warning: " + (stock - capacity)
+                    + " units were discarded for exceeding the compartment capacity.");
+        } else {
+            this.stock = stock;
+        }
+        this.hasProduct = !(this.name.equals("Undefined")
+                || this.price == 0
+                || this.capacity == 0);
     }
 
     public String getProductName() {
-        return name;
+        return this.name;
     }
 
     public int getPrice() {
-        return price;
+        return this.price;
     }
 
     public int getStock() {
-        return stock;
+        return this.stock;
     }
 
     public int getCapacity() {
-        return capacity;
+        return this.capacity;
     }
 
-    public void setNewCost(int cost) {
-        if(this.hasProduct){
-            if (cost > 0 && cost < 100000) {
-                this.price = cost;
+    public void setPrice(int price) {
+        if (this.hasProduct) {
+            if (price > 0 && price < 100000) {
+                this.price = price;
             } else {
                 System.out.println("Error: Invalid price. Has to be positive and less than 10€");
             }
-        }else{
+        } else {
             System.out.println("Error: There is nothing in this compartment");
         }
     }
@@ -77,17 +87,17 @@ public class Compartment {
     }
 
     public int refill(int quantity) {
-        if(this.hasProduct){
+        if (this.hasProduct) {
             if (quantity > 0) {
                 if (this.capacity > this.stock + quantity) {
                     this.stock += quantity;
                     return quantity;
                 } else {
-                    int refilled =  this.capacity - this.stock;
+                    int refilled = this.capacity - this.stock;
                     this.stock = this.capacity;
                     return refilled;
                 }
-            }else{
+            } else {
                 System.out.println("Error: Invalid quantity");
             }
         } else {

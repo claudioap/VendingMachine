@@ -22,29 +22,142 @@ package com.claudiop.vendingmachine;
  */
 public class VendingMachine {
 
-    final private int maximumRows;
     final private Row[] rows;
 
     public VendingMachine(int maximumRows) {
         if (maximumRows > 0 && maximumRows < 20) {
-            this.maximumRows = maximumRows;
         } else {
-            this.maximumRows = 0;
             System.out.println("Error: Invalid row capacity");
         }
-        rows = new Row[this.maximumRows];
+        this.rows = new Row[maximumRows];
+    }
+
+    private boolean rowExists(int row) {
+        return row >= 0 && row < this.rows.length;
     }
 
     public void insertRow(int row, int compartments, int compartmentCapacity) {
-        if (row < this.maximumRows && row > 0) {
+        if (rowExists(row)) {
             if (compartments > 0 && compartmentCapacity > 0) {
-                rows[row] = new Row(compartments);
+                this.rows[row] = new Row(compartments);
             } else {
                 System.out.println("Error: Invalid number of compartments and/or capacity");
             }
         } else {
             System.out.println("Error: Invalid row");
         }
+    }
+
+    public void removeRow(int row) {
+        if (rowExists(row)) {
+            this.rows[row] = null;
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
+    public void insertCompartment(int row, int capacity, String product, int stock, int price) {
+        if (rowExists(row)) {
+            this.rows[row].addCompartment(row, capacity, product, stock, price);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
+    public void removeCompartment(int row, int compartment) {
+        if (rowExists(row)) {
+            this.rows[row].removeCompartment(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
+    public int getNumberOfCompartments(int row) {
+        if (rowExists(row)) {
+            return this.rows[row].getNumberOfCompartments();
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public void dropProduct(int row, int compartment) {
+        if (rowExists(row)) {
+            this.rows[row].dropProduct(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
+    public String getProductName(int row, int compartment) {
+        if (rowExists(row)) {
+            return this.rows[row].getProductName(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return "";
+    }
+
+    public int getCapacity(int row, int compartment) {
+        if (rowExists(row)) {
+            return this.rows[row].getCapacity(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public int getStock(int row, int compartment) {
+        if (rowExists(row)) {
+            return this.rows[row].getStock(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public int getPrice(int row, int compartment) {
+        if (rowExists(row)) {
+            return this.rows[row].getPrice(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public void setPrice(int row, int compartment, int price) {
+        if (rowExists(row)) {
+            this.rows[row].setPrice(compartment, price);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
+    public int refillCompartment(int row, int compartment, int units) {
+        if (rowExists(row)) {
+            return this.rows[row].refillCompartment(compartment, units);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public int changeProduct(int row, int compartment, String product, int stock, int price) {
+        if (rowExists(row)) {
+            return this.rows[row].changeProduct(compartment, product, stock, price);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
+    }
+
+    public int emptyCompartment(int row, int compartment) {
+        if (rowExists(row)) {
+            return this.rows[row].emptyCompartment(compartment);
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+        return 0;
     }
 
 }

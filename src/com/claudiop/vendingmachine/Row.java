@@ -33,12 +33,13 @@ public class Row {
     }
 
     private boolean compartmentExists(int compartment) {
-        return compartment >= 0 && compartment < compartments.length;
+        return compartment >= 0 && compartment < this.compartments.length;
     }
 
-    public void addCompartment(int compartment, int compartmentSize) {
+    public void addCompartment(int compartment, int compartmentSize, String product, int stock, int price) {
         if (compartmentExists(compartment) || compartmentSize > 0) {
-            compartments[compartment] = new Compartment(compartmentSize);
+            this.compartments[compartment]
+                    = new Compartment(product, stock, price, compartmentSize);
         } else {
             System.out.println("Error: There is no such compartment slot or the its size isn't positive.");
         }
@@ -46,33 +47,46 @@ public class Row {
 
     public void removeCompartment(int compartment) {
         if (compartmentExists(compartment)) {
-            compartments[compartment] = null;
+            this.compartments[compartment] = null;
         } else {
             System.out.println("Error: There is no such compartment.");
         }
     }
 
-    public int getCompartmentCapacity(int compartment) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            return compartments[compartment].getCapacity();
+    public int getNumberOfCompartments() {
+        return this.compartments.length;
+    }
+
+    public String getProductName(int compartment) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].getProductName();
+        } else {
+            System.out.println("Error: There is no such compartment.");
+        }
+        return "";
+    }
+
+    public int getCapacity(int compartment) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].getCapacity();
         } else {
             System.out.println("Error: There is no such compartment.");
         }
         return 0;
     }
 
-    public int getCompartmentStock(int compartment) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            return compartments[compartment].getStock();
+    public int getStock(int compartment) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].getStock();
         } else {
             System.out.println("Error: There is no such compartment.");
         }
         return 0;
     }
 
-    public int getCompartmentPrice(int compartment) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            return compartments[compartment].getPrice();
+    public int getPrice(int compartment) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].getPrice();
         } else {
             System.out.println("Error: There is no such compartment.");
         }
@@ -80,26 +94,34 @@ public class Row {
     }
 
     public void dropProduct(int compartment) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            compartments[compartment].dropProduct();
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            this.compartments[compartment].dropProduct();
         } else {
             System.out.println("Error: There is no such compartment.");
         }
     }
 
-    public int setNewProduct(int compartment, String name, int stock, int price) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            return compartments[compartment].newProduct(name, compartment, compartment);
+    public int changeProduct(int compartment, String name, int stock, int price) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].newProduct(name, compartment, compartment);
         } else {
             System.out.println("Error: There is no such compartment.");
         }
         return 0;
     }
 
+    public void setPrice(int compartment, int price) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            this.compartments[compartment].setPrice(price);
+        } else {
+            System.out.println("Error: There is no such compartment.");
+        }
+    }
+
     public int refillCompartment(int compartment, int quantity) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
             if (quantity > 0) {
-                return compartments[compartment].refill(quantity);
+                return this.compartments[compartment].refill(quantity);
             }
             System.out.println("Error: Invalid quantity.");
         } else {
@@ -109,8 +131,8 @@ public class Row {
     }
 
     public int emptyCompartment(int compartment) {
-        if (compartmentExists(compartment) && compartments[compartment] != null) {
-            return compartments[compartment].empty();
+        if (compartmentExists(compartment) && this.compartments[compartment] != null) {
+            return this.compartments[compartment].empty();
         } else {
             System.out.println("Error: There is no such compartment.");
         }
