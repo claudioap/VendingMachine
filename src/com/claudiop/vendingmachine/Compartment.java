@@ -22,14 +22,14 @@ package com.claudiop.vendingmachine;
  */
 public class Compartment {
 
-
     private String name;
     private int price;
     private int stock;
     final private int capacity;
+    private boolean hasProduct;
 
     public Compartment(int capacity) {
-        this("Undefined", 0, (int) 0, capacity);
+        this("Undefined", 0, 0, capacity);
     }
 
     public Compartment(String product, int price, int stock, int capacity) {
@@ -37,6 +37,7 @@ public class Compartment {
         this.price = price;
         this.stock = stock;
         this.capacity = capacity;
+        this.hasProduct = !this.name.equals("Undefined");
     }
 
     public String getProductName() {
@@ -56,14 +57,18 @@ public class Compartment {
     }
 
     public void setNewCost(int cost) {
-        if (cost > 0 && cost < 100000) {
-            this.price = cost;
-        } else {
-            System.out.println("Error: Invalid price. Has to be positive and less than 10€");
+        if(this.hasProduct){
+            if (cost > 0 && cost < 100000) {
+                this.price = cost;
+            } else {
+                System.out.println("Error: Invalid price. Has to be positive and less than 10€");
+            }
+        }else{
+            System.out.println("Error: There is nothing in this compartment");
         }
     }
 
-    public void removeProduct() {
+    public void dropProduct() {
         if (this.stock == 0) {
             System.out.println("Error: No stock!");
         } else {
@@ -72,17 +77,22 @@ public class Compartment {
     }
 
     public int refill(int quantity) {
-        if (quantity > 0) {
-            if (this.capacity > this.stock + quantity) {
-                this.stock += quantity;
-                return quantity;
-            } else {
-                int refilled = (int) (this.capacity - this.stock);
-                this.stock = this.capacity;
-                return refilled;
+        if(this.hasProduct){
+            if (quantity > 0) {
+                if (this.capacity > this.stock + quantity) {
+                    this.stock += quantity;
+                    return quantity;
+                } else {
+                    int refilled =  this.capacity - this.stock;
+                    this.stock = this.capacity;
+                    return refilled;
+                }
+            }else{
+                System.out.println("Error: Invalid quantity");
             }
+        } else {
+            System.out.println("Error: There is nothing in this compartment");
         }
-        System.out.println("Error: Invalid quantity");
         return 0;
     }
 
