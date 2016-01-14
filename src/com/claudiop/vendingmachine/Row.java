@@ -24,7 +24,27 @@ public class Row {
 
     private Compartment[] compartments;
 
-    public Row(int numberOfCompartments) {
-        this.compartments = new Compartment[numberOfCompartments];
+    public Row(int slots) {
+        if (slots > 0) {
+            this.compartments = new Compartment[slots];
+        } else {
+            System.out.println("Error: The number of compartments and/or the compartment capacity is invalid");
+        }
+    }
+
+    public void addCompartment(int compartment, int compartmentSize) {
+        if (compartment >= 0 && compartment < compartments.length || compartmentSize > 0) {
+            compartments[compartment] = new Compartment(compartmentSize);
+        } else {
+            System.out.println("Error: There is no such compartment slot, or the its size isn't positive.");
+        }
+    }
+
+    public void removeCompartment(int compartment) {
+        if (compartment >= 0 && compartment < compartments.length) {
+            compartments[compartment] = null;
+        } else {
+            System.out.println("Error: There is no such compartment.");
+        }
     }
 }

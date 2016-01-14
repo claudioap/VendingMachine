@@ -22,9 +22,29 @@ package com.claudiop.vendingmachine;
  */
 public class VendingMachine {
 
-    private Row[] rows;
+    final private int maximumRows;
+    final private Row[] rows;
 
-    public VendingMachine() {
-        this.rows = new Row[5];
+    public VendingMachine(int maximumRows) {
+        if (maximumRows > 0 && maximumRows < 20) {
+            this.maximumRows = maximumRows;
+        } else {
+            this.maximumRows = 0;
+            System.out.println("Error: Invalid row capacity");
+        }
+        rows = new Row[this.maximumRows];
     }
+
+    public void insertRow(int row, int compartments, int compartmentCapacity) {
+        if (row < this.maximumRows && row > 0) {
+            if (compartments > 0 && compartmentCapacity > 0) {
+                rows[row] = new Row(compartments);
+            } else {
+                System.out.println("Error: Invalid number of compartments and/or capacity");
+            }
+        } else {
+            System.out.println("Error: Invalid row");
+        }
+    }
+
 }

@@ -22,12 +22,17 @@ package com.claudiop.vendingmachine;
  */
 public class Compartment {
 
+
     private String name;
     private int price;
-    private short stock;
-    final private short capacity;
+    private int stock;
+    final private int capacity;
 
-    public Compartment(String product, int price, short stock, short capacity) {
+    public Compartment(int capacity) {
+        this("Undefined", 0, (int) 0, capacity);
+    }
+
+    public Compartment(String product, int price, int stock, int capacity) {
         this.name = product;
         this.price = price;
         this.stock = stock;
@@ -42,11 +47,11 @@ public class Compartment {
         return price;
     }
 
-    public short getStock() {
+    public int getStock() {
         return stock;
     }
 
-    public short getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 
@@ -72,7 +77,7 @@ public class Compartment {
                 this.stock += quantity;
                 return quantity;
             } else {
-                int refilled = this.capacity - this.stock;
+                int refilled = (int) (this.capacity - this.stock);
                 this.stock = this.capacity;
                 return refilled;
             }
@@ -87,7 +92,7 @@ public class Compartment {
         return removed;
     }
 
-    public int newProduct(String name, short stock, short price) {
+    public int newProduct(String name, int stock, int price) {
         int oldStock = empty();
         if (name.trim().equalsIgnoreCase(" ") || stock > capacity || stock < 0) {
             this.name = name;
