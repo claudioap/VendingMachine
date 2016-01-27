@@ -16,83 +16,92 @@
  */
 package com.claudiop.vendingmachine;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Cláudio Pereira
  */
 public class Interpreter {
-    private String oldInput;
-    
-    public Interpreter() {
-        this.oldInput = "";
+
+    private String buffer;
+    private boolean continuous;
+    private String secret;
+    private final String ok;
+    private final String cancel;
+
+    public Interpreter(boolean continuous, String secret) {
+        this.buffer = "";
+        this.continuous = continuous;
+        this.secret = secret;
+        this.ok = Character.toString((char) 0);//FIXME
+        this.cancel = Character.toString((char) 0);//FIXME
     }
-    
-    private String getLastFourChars(String input){
-        this.oldInput += input;
-        //Any compartment can be selected with 4 chars, anything besides that can be discarded from memory
-        //Eg. A12[Ack] = 4 chars
-        if(this.oldInput.length() - 5 > 0){
-            this.oldInput = this.oldInput.substring(this.oldInput.length());
-        }
-        return oldInput;
-    }
-    
-    static private String parseCompartment(String location){
-        if(location.length() < 3){
-            return "";
-        }
-        if(location.length() > 3){
-            location = location.substring(location.length()-4);
-        }
-        if(isUpperCaseLetter(location.charAt(0)) && isNumber(location.charAt(1))
-                && isNumber(location.charAt(2))){
-            return location;
-        }
-        return "";
-    }
-    
-    //Can't use Integer.parseInt(), it requires exception handling
-    static private boolean isNumber(char variable){
-        return (variable > 47 && variable < 58);
-    }
-    
-    static private boolean isUpperCaseLetter(char variable){
-        return (variable > 64 && variable < 91);
-    }
-    
-    
-    //TODO make this method either more elegant or break it apart
-    public Action  parse(String input){
-        final char acknowledge = 10;
-        final char cancel = 24;
-        Action action = new Action();
-        if(input.equals("")){//Nothing was typed
-            action.doNothing = true;
-        }else if(input.charAt(input.length()-1) == cancel ){ //If last button pressed was cancel
-            action.clear = true;
+
+    public ArrayList<Action> parse(String input) {
+        if (input.trim().equals("")) {
+            return null;
         } else {
-            String command = getLastFourChars(input);
-            String subCommands[] = command.split(Character.toString(cancel));//Split instruction based on cancel's
-            command = subCommands[subCommands.length -1];//And get the part after the last cancel
-            subCommands = command.split(Character.toString(acknowledge));//Split instruction based on ack's
-            if(command.charAt(subCommands.length -1) == acknowledge){ // If last chat was an ack
-                //Then parse what was before it to find a location
-                String location = parseCompartment(subCommands[subCommands.length -1]);
-                if(location.equals("")){
-                    action.locationError = true;
-                }else{
-                    action.row = 65 - (int)location.charAt(0);
-                    //The pain that is not being able to use error handling yet...
-                    action.container = 10 * (48 - (int)location.charAt(1)) + 48 - (int)location.charAt(2);
-                }
-            }else{
-                //If last wasn't an aknowledge nor cancel then the user was typing 
-                command = subCommands[subCommands.length -1];
-                if(command.length()>3){ //Take the first char out
-                    action.typeText = command.substring(1);
-                }
+            this.buffer = this.continuous ? this.buffer + input : input;
+            filterLastCommands();
+            return findActions();
+            //Add action showText with the buffer remainings
+        }
+    }
+
+    //Filters the issued commands which weren't cancelled
+    private void filterLastCommands() {
+        if (this.buffer.endsWith(this.cancel)) {
+            this.buffer = this.cancel;
+        }
+        //Ignore anything before the last cancel
+        if (this.buffer.contains(this.cancel)) {
+            String temp[] = this.buffer.split(this.cancel);
+            this.buffer = temp[temp.length - 1];
+        }
+    }
+
+    private ArrayList<Action> findActions() {
+        ArrayList<Action> actions = new ArrayList();
+        //Filter redundant OK's
+        while (this.buffer.length() > 0 && this.buffer.startsWith(this.ok)) {
+            this.buffer = this.buffer.substring(1);
+        }
+        //If there was nothing left, or last command as a cancel command
+        if (this.buffer.length() == 0 || this.buffer.equals(this.cancel)) {
+            //Clear action
+            return actions;
+        }
+        boolean lastWasOk = this.buffer.endsWith(this.ok);
+        String userInput[] = this.buffer.split(this.ok);
+        for (String input : userInput) {
+            if (input.equals(this.secret)) {
+                //Make admin action
+            } else if (isPosition(input)) {
+                //Make drop action
             }
         }
-        return action;
+        if (!lastWasOk) {
+            this.buffer = userInput[userInput.length - 1];
+            //Convert last action to a show action
+        }
+        return actions;
     }
+
+    private boolean isPosition(String input) {
+        if (input.length() == 2) {
+            return input.charAt(0) > 64 && input.charAt(0) < 91
+                    && input.charAt(1) > 47 && input.charAt(1) < 58;
+        }
+        return false;
+    }
+
+    public void setContinuous(boolean value) {
+        this.continuous = value;
+    }
+
+    public void changeSecret(String secret) {
+        this.secret = secret;
+    }
+
 }
