@@ -20,33 +20,6 @@ package com.claudiop.vendingmachine;
  *
  * @author Cláudio Pereira
  */
-public class Action {
-
-    public ActionType action;
-    public String parameter;
-
-    public Action(ActionType action, String parameter) {
-        this.action = action;
-        this.parameter = parameter;
-    }
-
-    public ActionType get() {
-        return action;
-    }
-
-    public ActionType getParameter() {
-        return action;
-    }
-
-    public void changeAction(ActionType action) {
-        if (action != ActionType.ESCALATE && action != ActionType.SHOW
-                && this.action != ActionType.ESCALATE
-                && this.action != ActionType.SHOW) {
-            this.action = action;
-        } else {
-            System.out.println("Warning: You cant change this action"
-                    + " or an invalid action was requested");
-        }
-
-    }
+public enum ActionType {
+    SHOW, DROP, CLEAR, ESCALATE
 }

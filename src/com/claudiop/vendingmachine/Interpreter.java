@@ -69,21 +69,21 @@ public class Interpreter {
         }
         //If there was nothing left, or last command as a cancel command
         if (this.buffer.length() == 0 || this.buffer.equals(this.cancel)) {
-            //Clear action
+            actions.add(new Action(ActionType.CLEAR, null));
             return actions;
         }
         boolean lastWasOk = this.buffer.endsWith(this.ok);
         String userInput[] = this.buffer.split(this.ok);
         for (String input : userInput) {
             if (input.equals(this.secret)) {
-                //Make admin action
+                actions.add(new Action(ActionType.ESCALATE, null));
             } else if (isPosition(input)) {
-                //Make drop action
+                actions.add(new Action(ActionType.DROP, input));
             }
         }
         if (!lastWasOk) {
             this.buffer = userInput[userInput.length - 1];
-            //Convert last action to a show action
+            actions.get(actions.size() - 1).changeAction(ActionType.SHOW);
         }
         return actions;
     }
