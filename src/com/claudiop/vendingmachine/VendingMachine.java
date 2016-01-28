@@ -49,6 +49,7 @@ public class VendingMachine {
             this.maxRows = 6;
             System.out.println("Error: Invalid number of rows");
         }
+        this.rows = new HashMap(this.maxRows);
         this.running = false;
         this.keyboard = new Keyboard(false);
         this.screen = new Screen();
@@ -74,28 +75,33 @@ public class VendingMachine {
         }
     }
 
-    public void removeRow(char row) {
+    public Row removeRow(char row) {
         if (this.rows.containsKey(row)) {
-            this.rows.remove(row);
-        } else {
-            System.out.println("Error: Invalid row");
+            return this.rows.remove(row);
         }
+        System.out.println("Error: Invalid row");
+        return null;
     }
 
     public void insertCompartment(char row, int compartment, int capacity, String product, int stock, int price) {
         if (this.rows.containsKey(row)) {
-            this.rows.get(row).addCompartment(compartment, capacity, product, stock, price);
+            //This is being checked here because it is specific to the vending machine, not to the container
+            if (price < 1000) {
+                this.rows.get(row).addCompartment(compartment, capacity, product, stock, price);
+            } else {
+                System.out.println("Error: The price is too high");
+            }
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public void removeCompartment(char row, int compartment) {
+    public Compartment removeCompartment(char row, int compartment) {
         if (this.rows.containsKey(row)) {
-            this.rows.get(row).removeCompartment(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+            return this.rows.get(row).removeCompartment(compartment);
         }
+        System.out.println("Error: Invalid row");
+        return null;
     }
 
     public int getNumberOfCompartments(char row) {
@@ -106,12 +112,12 @@ public class VendingMachine {
         return 0;
     }
 
-    public void dropProduct(char row, int compartment) {
+    public boolean dropProduct(char row, int compartment) {
         if (this.rows.containsKey(row)) {
-            this.rows.get(row).dropProduct(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+            return this.rows.get(row).dropProduct(compartment);
         }
+        System.out.println("Error: Invalid row");
+        return false;
     }
 
     public String getProductName(char row, int compartment) {
@@ -120,6 +126,14 @@ public class VendingMachine {
         }
         System.out.println("Error: Invalid row");
         return "";
+    }
+
+    public boolean hasProduct(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).hasProduct(compartment);
+        }
+        System.out.println("Error: Invalid row");
+        return false;
     }
 
     public int getCapacity(char row, int compartment) {
@@ -148,7 +162,11 @@ public class VendingMachine {
 
     public void setPrice(char row, int compartment, int price) {
         if (this.rows.containsKey(row)) {
-            this.rows.get(row).setPrice(compartment, price);
+            if (price < 1000) {
+                this.rows.get(row).setPrice(compartment, price);
+            } else {
+                System.out.println("Error: The price is too high.");
+            }
         } else {
             System.out.println("Error: Invalid row");
         }
@@ -164,7 +182,11 @@ public class VendingMachine {
 
     public int changeProduct(char row, int compartment, String product, int stock, int price) {
         if (this.rows.containsKey(row)) {
-            return this.rows.get(row).changeProduct(compartment, product, stock, price);
+            if (price < 1000) {
+                return this.rows.get(row).changeProduct(compartment, product, stock, price);
+            } else {
+                System.out.println("Error: The price is too high.");
+            }
         }
         System.out.println("Error: Invalid row");
         return 0;

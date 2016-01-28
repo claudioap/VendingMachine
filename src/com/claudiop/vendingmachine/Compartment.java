@@ -28,13 +28,8 @@ public class Compartment {
     final private int capacity;
     private boolean hasProduct;
 
-    //FIXME, Either make use of this constructor or remove it
-    public Compartment(int capacity) {
-        this("Undefined", 0, 0, capacity);
-    }
-
     public Compartment(String product, int price, int stock, int capacity) {
-        this.name = product.trim().equals("") || product == null ? "Undefined" : product;
+        this.name = product.trim().equals("") ? "Undefined" : product;
         this.price = price > 0 ? price : 0;
         //TODO validate price < 10€ in the VendingMachine as it is not specific to the Compartment
         this.capacity = capacity > 0 ? capacity : 0;
@@ -48,6 +43,10 @@ public class Compartment {
         this.hasProduct = !(this.name.equals("Undefined")
                 || this.price == 0
                 || this.capacity == 0);
+    }
+
+    public boolean hasProduct() {
+        return this.hasProduct;
     }
 
     public String getProductName() {
@@ -68,7 +67,7 @@ public class Compartment {
 
     public void setPrice(int price) {
         if (this.hasProduct) {
-            if (price > 0 && price < 100000) {
+            if (price > 0 && price < 10000) {
                 this.price = price;
             } else {
                 System.out.println("Error: Invalid price. Has to be positive and less than 10€");
@@ -78,12 +77,13 @@ public class Compartment {
         }
     }
 
-    public void dropProduct() {
+    public boolean dropProduct() {
         if (this.stock == 0) {
             System.out.println("Error: No stock!");
-        } else {
-            this.stock--;
+            return false;
         }
+        this.stock--;
+        return true;
     }
 
     public int refill(int quantity) {
@@ -117,6 +117,7 @@ public class Compartment {
         if (name.trim().equalsIgnoreCase(" ") || stock > capacity || stock < 0) {
             this.name = name;
             this.stock = stock;
+            this.hasProduct = true;
         } else {
             System.out.println("The name and/or quantity of product is/are invalid");
         }
