@@ -16,6 +16,10 @@
  */
 package com.claudiop.vendingmachine;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  *
  * @author Cláudio Pereira
@@ -23,13 +27,25 @@ package com.claudiop.vendingmachine;
 public class VendingMachine {
 
     final private Row[] rows;
+    private boolean running;
+    private Keyboard keyboard;
+    private Interpreter interpreter;
+    private Screen screen;
+    SimpleDateFormat date;
+    private boolean root;
 
-    public VendingMachine(int maximumRows) {
+    public VendingMachine(int maximumRows, String key) {
         if (maximumRows > 0 && maximumRows < 20) {
         } else {
             System.out.println("Error: Invalid row capacity");
         }
         this.rows = new Row[maximumRows];
+        this.running = false;
+        this.keyboard = new Keyboard(false);
+        this.screen = new Screen();
+        this.interpreter = new Interpreter(true, key);
+        this.date = new SimpleDateFormat("dd-MM ' ' HH:mm:ss");
+        this.root = false;
     }
 
     private boolean rowExists(int row) {
@@ -160,4 +176,50 @@ public class VendingMachine {
         return 0;
     }
 
+    //This would make much more sense if I was allowed to use threads and timers.
+    public void start() {
+        if (this.running) {
+            System.out.println("Warning: The machine was already started.");
+        } else {
+            loop();
+        }
+    }
+
+    public void stop() {
+        this.running = false;
+    }
+
+    private void loop() {
+        ArrayList<Action> actionList;
+        while (this.running) {
+            takeAction(
+                    this.interpreter.parse(
+                            this.keyboard.read()
+                    )
+            );
+            //Can't implement Thread.sleep(100);
+        }
+    }
+
+    private void takeAction(ArrayList<Action> actionList) {
+        Iterator<Action> iter = actionList.iterator();
+        Action action;
+        while (iter.hasNext()){
+             action = iter.next();
+             switch(action.type()){
+                case ESCALATE:
+                    this.root = true;
+                    //TODO Make a way to change to regular user again
+                    break;
+                case DROP:
+                    break;
+                case SHOW:
+                    break;
+                case CLEAR:
+                    break;
+                default:
+                    //nothing so far. Think about this
+             }
+        }
+    }
 }

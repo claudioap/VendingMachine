@@ -30,7 +30,7 @@ public class Action {
         this.parameter = parameter;
     }
 
-    public ActionType get() {
+    public ActionType type() {
         return action;
     }
 

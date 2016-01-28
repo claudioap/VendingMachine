@@ -40,7 +40,7 @@ public class Interpreter {
 
     public ArrayList<Action> parse(String input) {
         if (input.trim().equals("")) {
-            return null;
+            return new ArrayList<>();
         } else {
             this.buffer = this.continuous ? this.buffer + input : input;
             filterLastCommands();
