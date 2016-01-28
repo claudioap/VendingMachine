@@ -35,6 +35,7 @@ public class VendingMachine {
     SimpleDateFormat date;
     private boolean root;
     private final int maxRows;
+    private static final String BRANDING = "";
 
     public VendingMachine(String key, int rows) {
         if (key == null || key.trim().equals("")) {
@@ -52,7 +53,7 @@ public class VendingMachine {
         this.rows = new HashMap(this.maxRows);
         this.running = false;
         this.keyboard = new Keyboard(false);
-        this.screen = new Screen();
+        this.screen = new Screen(true);
         this.date = new SimpleDateFormat("dd-MM ' ' HH:mm:ss");
         this.root = false;
     }
