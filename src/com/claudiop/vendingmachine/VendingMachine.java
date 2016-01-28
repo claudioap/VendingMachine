@@ -18,6 +18,7 @@ package com.claudiop.vendingmachine;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -26,153 +27,154 @@ import java.util.Iterator;
  */
 public class VendingMachine {
 
-    final private Row[] rows;
+    private HashMap<Character, Row> rows;
     private boolean running;
-    private Keyboard keyboard;
-    private Interpreter interpreter;
-    private Screen screen;
+    private final Keyboard keyboard;
+    private final Interpreter interpreter;
+    private final Screen screen;
     SimpleDateFormat date;
     private boolean root;
+    private final int maxRows;
 
-    public VendingMachine(int maximumRows, String key) {
-        if (maximumRows > 0 && maximumRows < 20) {
+    public VendingMachine(String key, int rows) {
+        if (key == null || key.trim().equals("")) {
+            System.out.println("Error: Invalid key");
+            this.interpreter = new Interpreter(true, "000000");
         } else {
-            System.out.println("Error: Invalid row capacity");
+            this.interpreter = new Interpreter(true, key);
         }
-        this.rows = new Row[maximumRows];
+        if (rows > 0 && rows < 26) {
+            this.maxRows = rows;
+        } else {
+            this.maxRows = 6;
+            System.out.println("Error: Invalid number of rows");
+        }
         this.running = false;
         this.keyboard = new Keyboard(false);
         this.screen = new Screen();
-        this.interpreter = new Interpreter(true, key);
         this.date = new SimpleDateFormat("dd-MM ' ' HH:mm:ss");
         this.root = false;
     }
 
-    private boolean rowExists(int row) {
-        return row >= 0 && row < this.rows.length;
+    private boolean isWithinRowRange(char row) {
+        return this.maxRows + 64 > (int) (row) && (int) (row) > 64;
     }
 
-    public void insertRow(int row, int compartments, int compartmentCapacity) {
-        if (rowExists(row)) {
-            if (compartments > 0 && compartmentCapacity > 0) {
-                this.rows[row] = new Row(compartments);
+    public void insertRow(char row, int compartments, int compartmentCapacity) {
+        if (!isWithinRowRange(row)) {
+            System.out.println("Error: Invalid row");
+        } else if (compartments > 0 && compartmentCapacity > 0) {
+            if (this.rows.containsKey(row)) {
+                System.out.println("Error: Row exists");
             } else {
-                System.out.println("Error: Invalid number of compartments and/or capacity");
+                this.rows.put(row, new Row(compartments));
             }
         } else {
-            System.out.println("Error: Invalid row");
+            System.out.println("Error: Invalid number of compartments and/or capacity");
         }
     }
 
-    public void removeRow(int row) {
-        if (rowExists(row)) {
-            this.rows[row] = null;
+    public void removeRow(char row) {
+        if (this.rows.containsKey(row)) {
+            this.rows.remove(row);
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public void insertCompartment(int row, int capacity, String product, int stock, int price) {
-        if (rowExists(row)) {
-            this.rows[row].addCompartment(row, capacity, product, stock, price);
+    public void insertCompartment(char row, int compartment, int capacity, String product, int stock, int price) {
+        if (this.rows.containsKey(row)) {
+            this.rows.get(row).addCompartment(compartment, capacity, product, stock, price);
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public void removeCompartment(int row, int compartment) {
-        if (rowExists(row)) {
-            this.rows[row].removeCompartment(compartment);
+    public void removeCompartment(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            this.rows.get(row).removeCompartment(compartment);
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public int getNumberOfCompartments(int row) {
-        if (rowExists(row)) {
-            return this.rows[row].getNumberOfCompartments();
-        } else {
-            System.out.println("Error: Invalid row");
+    public int getNumberOfCompartments(char row) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).getNumberOfCompartments();
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public void dropProduct(int row, int compartment) {
-        if (rowExists(row)) {
-            this.rows[row].dropProduct(compartment);
+    public void dropProduct(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            this.rows.get(row).dropProduct(compartment);
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public String getProductName(int row, int compartment) {
-        if (rowExists(row)) {
-            return this.rows[row].getProductName(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+    public String getProductName(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).getProductName(compartment);
         }
+        System.out.println("Error: Invalid row");
         return "";
     }
 
-    public int getCapacity(int row, int compartment) {
-        if (rowExists(row)) {
-            return this.rows[row].getCapacity(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int getCapacity(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).getCapacity(compartment);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public int getStock(int row, int compartment) {
-        if (rowExists(row)) {
-            return this.rows[row].getStock(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int getStock(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).getStock(compartment);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public int getPrice(int row, int compartment) {
-        if (rowExists(row)) {
-            return this.rows[row].getPrice(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int getPrice(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).getPrice(compartment);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public void setPrice(int row, int compartment, int price) {
-        if (rowExists(row)) {
-            this.rows[row].setPrice(compartment, price);
+    public void setPrice(char row, int compartment, int price) {
+        if (this.rows.containsKey(row)) {
+            this.rows.get(row).setPrice(compartment, price);
         } else {
             System.out.println("Error: Invalid row");
         }
     }
 
-    public int refillCompartment(int row, int compartment, int units) {
-        if (rowExists(row)) {
-            return this.rows[row].refillCompartment(compartment, units);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int refillCompartment(char row, int compartment, int units) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).refillCompartment(compartment, units);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public int changeProduct(int row, int compartment, String product, int stock, int price) {
-        if (rowExists(row)) {
-            return this.rows[row].changeProduct(compartment, product, stock, price);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int changeProduct(char row, int compartment, String product, int stock, int price) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).changeProduct(compartment, product, stock, price);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
-    public int emptyCompartment(int row, int compartment) {
-        if (rowExists(row)) {
-            return this.rows[row].emptyCompartment(compartment);
-        } else {
-            System.out.println("Error: Invalid row");
+    public int emptyCompartment(char row, int compartment) {
+        if (this.rows.containsKey(row)) {
+            return this.rows.get(row).emptyCompartment(compartment);
         }
+        System.out.println("Error: Invalid row");
         return 0;
     }
 
@@ -204,9 +206,9 @@ public class VendingMachine {
     private void takeAction(ArrayList<Action> actionList) {
         Iterator<Action> iter = actionList.iterator();
         Action action;
-        while (iter.hasNext()){
-             action = iter.next();
-             switch(action.type()){
+        while (iter.hasNext()) {
+            action = iter.next();
+            switch (action.type()) {
                 case ESCALATE:
                     this.root = true;
                     //TODO Make a way to change to regular user again
@@ -218,8 +220,8 @@ public class VendingMachine {
                 case CLEAR:
                     break;
                 default:
-                    //nothing so far. Think about this
-             }
+                //nothing so far. Think about this
+            }
         }
     }
 }
