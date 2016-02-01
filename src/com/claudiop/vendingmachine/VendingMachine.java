@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
+ * A vending machine which holds several products and alows users and a manager
+ * to interact with them
  *
  * @author Cláudio Pereira
  */
@@ -53,6 +55,12 @@ public class VendingMachine {
             + "| (_| |  __/  \\ V /  __/ | | | (_| | (_| |\n"
             + " \\__,_|\\___|   \\_/ \\___|_| |_|\\__,_|\\__,_|";
 
+    /**
+     * Create a new vending machine
+     *
+     * @param key Secret root key
+     * @param rows Number of supported rows
+     */
     public VendingMachine(int key, int rows) {
         this.INTERPRETER = new Interpreter(true, key);
         if (rows > 0 && rows < 26) {
@@ -70,6 +78,12 @@ public class VendingMachine {
         return this.MAX_ROWS > (int) (row - 'A') && (int) (row) >= 'A';
     }
 
+    /**
+     * Creates a new row with support to a number of compartments
+     *
+     * @param row Row slot
+     * @param compartments Compartment capacity
+     */
     public void insertRow(char row, int compartments) {
         if (!(isWithinRowRange(row))) {
             System.out.println("HARR");
@@ -85,6 +99,12 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Removes a row from its slot
+     *
+     * @param row Row slot
+     * @return Removed row
+     */
     public Row removeRow(char row) {
         if (!this.root) {
             System.out.println("Error: Premission denied");
@@ -97,6 +117,16 @@ public class VendingMachine {
         return null;
     }
 
+    /**
+     * Creates a new compartment into one of the row slots
+     *
+     * @param row Row
+     * @param compartment Row slot
+     * @param capacity Compartment capacity
+     * @param product Product name
+     * @param stock Product stock
+     * @param price Product price
+     */
     public void insertCompartment(char row, int compartment, int capacity, String product, int stock, int price) {
         if (this.ROWS.containsKey(row)) {
             this.ROWS.get(row).addCompartment(compartment, capacity, product, stock, price);
@@ -105,6 +135,13 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Removes a compartment from a slot in a row
+     *
+     * @param row Row
+     * @param compartment Compartment slot
+     * @return Removed compartment
+     */
     public Compartment removeCompartment(char row, int compartment) {
         if (!this.root) {
             System.out.println("Error: Premission denied");
@@ -117,6 +154,12 @@ public class VendingMachine {
         return null;
     }
 
+    /**
+     * Gets the number of compartments in a row
+     *
+     * @param row Row
+     * @return Number of compartments
+     */
     public int getNumberOfCompartments(char row) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).getNumberOfCompartments();
@@ -125,6 +168,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Drops a product from a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Sucess
+     */
     public boolean dropProduct(char row, int compartment) {
         if (!this.root) {
             System.out.println("Error: Premission denied");
@@ -137,6 +187,13 @@ public class VendingMachine {
         return false;
     }
 
+    /**
+     * Obtains the name of the product in a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Product name
+     */
     public String getProductName(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).getProductName(compartment);
@@ -145,6 +202,13 @@ public class VendingMachine {
         return "";
     }
 
+    /**
+     * Checks if a compartment has product on it
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Compartment has product
+     */
     public boolean hasProduct(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).hasProduct(compartment);
@@ -153,6 +217,13 @@ public class VendingMachine {
         return false;
     }
 
+    /**
+     * Obtains the compartment capacity
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Compartment capacity
+     */
     public int getCapacity(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).getCapacity(compartment);
@@ -161,6 +232,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Obtains the stock of a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return
+     */
     public int getStock(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).getStock(compartment);
@@ -169,6 +247,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Obtains the price of the products in a container
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Product price
+     */
     public int getPrice(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).getPrice(compartment);
@@ -177,6 +262,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Sets a new price to an existing container
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @param price
+     */
     public void setPrice(char row, int compartment, int price) {
         if (this.ROWS.containsKey(row)) {
             this.ROWS.get(row).setPrice(compartment, price);
@@ -185,6 +277,14 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Refills a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @param units Units to refill
+     * @return Unites refilled
+     */
     public int refillCompartment(char row, int compartment, int units) {
         if (!this.root) {
             System.out.println("Error: Premission denied");
@@ -197,6 +297,16 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Changes the product of a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @param product
+     * @param stock
+     * @param price
+     * @return Old stock
+     */
     public int changeProduct(char row, int compartment, String product, int stock, int price) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).changeProduct(compartment, product, stock, price);
@@ -205,6 +315,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Empties a compartment
+     *
+     * @param row Row where the compartment is
+     * @param compartment Compartment slot
+     * @return Old stock
+     */
     public int emptyCompartment(char row, int compartment) {
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).emptyCompartment(compartment);
@@ -214,6 +331,9 @@ public class VendingMachine {
     }
 
     //This would make much more sense if I was allowed to use threads and timers.
+    /**
+     * Starts the machine
+     */
     public void start() {
         if (this.running) {
             System.out.println("Warning: The machine was already started.");
@@ -222,6 +342,9 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Stops the machine
+     */
     public void stop() {
         this.running = false;
     }
@@ -311,6 +434,12 @@ public class VendingMachine {
         }
     }
 
+    /**
+     * Lets the manager preform an action assuming it is logged
+     *
+     * @param action Action to preform
+     * @return Success
+     */
     public boolean manage(Action action) {
         if (this.root) {
             return this.manage(action, this.SECRET_KEY);
@@ -319,6 +448,13 @@ public class VendingMachine {
         return false;
     }
 
+    /**
+     * Lets the manager preform an action
+     *
+     * @param action Action to preform
+     * @param key Secret key
+     * @return Success
+     */
     public boolean manage(Action action, int key) {
         if (key != this.SECRET_KEY) {
             System.out.println("Error: Invalid key");
@@ -331,6 +467,12 @@ public class VendingMachine {
         return false;
     }
 
+    /**
+     * Lets the manager preform an action assuming it is logged
+     *
+     * @param amount Amount to remove
+     * @return Removed credit
+     */
     public int removeCredit(int amount) {
         if (this.root) {
             return this.removeCredit(amount, this.SECRET_KEY);
@@ -339,6 +481,13 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Lets the manager preform an action
+     *
+     * @param amount Amount to remove
+     * @param key Secret key
+     * @return Removed credit
+     */
     public int removeCredit(int amount, int key) {
         if (amount < 0) {
             System.out.println("Error: Invalid amount");
@@ -356,6 +505,11 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Lets the manager preform an action assuming it is logged
+     *
+     * @return Credit
+     */
     public int getCredit() {
         if (this.root) {
             return this.getCredit(this.SECRET_KEY);
@@ -364,6 +518,12 @@ public class VendingMachine {
         return 0;
     }
 
+    /**
+     * Lets the manager preform an action assuming it is logged
+     *
+     * @param key Secret key
+     * @return Credit
+     */
     public int getCredit(int key) {
         if (this.SECRET_KEY == key) {
             return this.credit;

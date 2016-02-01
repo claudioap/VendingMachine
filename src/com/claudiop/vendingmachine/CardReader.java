@@ -17,6 +17,8 @@
 package com.claudiop.vendingmachine;
 
 /**
+ * The card reader is an object with the purpose of accessing cards from a
+ * machine and preform operations on them
  *
  * @author Cláudio Pereira
  */
@@ -24,14 +26,28 @@ public class CardReader {
 
     private Card card = null;
 
+    /**
+     * Constructs the card reader
+     */
     public CardReader() {
 
     }
 
+    /**
+     * Checks if there is a card
+     *
+     * @return Card inserted
+     */
     public boolean hasCard() {
         return this.card != null;
     }
 
+    /**
+     * Takes a card to read
+     *
+     * @param card Card
+     * @return Success
+     */
     public boolean insertCard(Card card) {
         if (this.card != null && card != null) {
             this.card = card;//TODO Make a copy instead of an assigment
@@ -41,11 +57,19 @@ public class CardReader {
         return false;
     }
 
+    /**
+     * Removes the inserted card
+     */
     public void removeCard() {
         this.card = null;
         //Return the removed card, maybe
     }
 
+    /**
+     * Obtains the credit in the card
+     *
+     * @return Credit
+     */
     public int getCredit() {
         if (this.card != null) {
             return this.card.getCredit();
@@ -54,6 +78,12 @@ public class CardReader {
         return 0;
     }
 
+    /**
+     * Debits the inserted card
+     *
+     * @param amount
+     * @return
+     */
     public boolean debit(int amount) {
         if (this.card != null) {
             return this.card.debit(amount);

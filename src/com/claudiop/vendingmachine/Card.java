@@ -17,15 +17,22 @@
 package com.claudiop.vendingmachine;
 
 /**
+ * Represents a vending machine card used to buy products
  *
  * @author Cláudio Pereira
  */
 public class Card {
 
-    private final int ID;
+    private final int ID; //FIXME
     private int credit;
     private final int MAX_CREDIT;
 
+    /**
+     * Create a new card
+     *
+     * @param credit Base credit
+     * @param maxCredit Max credit
+     */
     public Card(int credit, int maxCredit) {
         if (credit > maxCredit) {
             this.credit = maxCredit;
@@ -37,16 +44,43 @@ public class Card {
         this.ID = 0;
     }
 
+    /**
+     * Obtains the credit of the card
+     *
+     * @return Credit
+     */
     public int getCredit() {
         return credit;
     }
 
+    /**
+     * Debit the card
+     *
+     * @param amount Amount to debit
+     * @return success
+     */
     public boolean debit(int amount) {
         if (amount <= this.credit) {
             this.credit -= amount;
             return true;
         }
         return false;
+    }
+
+    /**
+     * Credit the card
+     *
+     * @param amount Amount to credit
+     * @return Credited amount
+     */
+    public int credit(int amount) {
+        if (amount + this.credit > this.MAX_CREDIT) {
+            int temp = amount - this.MAX_CREDIT;
+            this.credit = this.MAX_CREDIT;
+            return temp;
+        }
+        this.credit += amount;
+        return amount;
     }
 
 }

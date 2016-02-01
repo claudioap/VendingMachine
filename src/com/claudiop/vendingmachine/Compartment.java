@@ -17,6 +17,7 @@
 package com.claudiop.vendingmachine;
 
 /**
+ * Container is a class to abstract a slot which has a product inside. It
  *
  * @author Cláudio Pereira
  */
@@ -28,6 +29,15 @@ public class Compartment {
     final private int capacity;
     private boolean hasProduct;
 
+    /**
+     * Creates a compartment. Product is set as "Undefined" if any of the
+     * arguments is invalid or has a bad value.
+     *
+     * @param product Product name
+     * @param price Product price
+     * @param stock Product stock
+     * @param capacity Compartment capacity
+     */
     public Compartment(String product, int price, int stock, int capacity) {
         this.name = product.trim().equals("") ? "Undefined" : product;
         this.price = price > 0 ? price : 0;
@@ -44,26 +54,56 @@ public class Compartment {
                 || this.capacity == 0);
     }
 
+    /**
+     * Checks if there is a product in the container
+     *
+     * @return Container has a product
+     */
     public boolean hasProduct() {
         return this.hasProduct;
     }
 
+    /**
+     * Obtains the name of the product in the container
+     *
+     * @return Product Product name
+     */
     public String getProductName() {
         return this.name;
     }
 
+    /**
+     * Obtains the price of the product in the container
+     *
+     * @return Product price
+     */
     public int getPrice() {
         return this.price;
     }
 
+    /**
+     * Obtains the stock of the product in the container
+     *
+     * @return Product stock
+     */
     public int getStock() {
         return this.stock;
     }
 
+    /**
+     * Obtains the capacity of the container
+     *
+     * @return Product capacity
+     */
     public int getCapacity() {
         return this.capacity;
     }
 
+    /**
+     * Sets a new price for the product
+     *
+     * @param price New price
+     */
     public void setPrice(int price) {
         if (this.hasProduct) {
             if (price > 0 && price < 10000) {
@@ -76,6 +116,11 @@ public class Compartment {
         }
     }
 
+    /**
+     * Removes one unit from the container
+     *
+     * @return Was it successful?
+     */
     public boolean dropProduct() {
         if (this.stock == 0) {
             System.out.println("Error: No stock!");
@@ -85,6 +130,12 @@ public class Compartment {
         return true;
     }
 
+    /**
+     * Refills the container
+     *
+     * @param quantity Product amount to refill
+     * @return Quantity refilled
+     */
     public int refill(int quantity) {
         if (this.hasProduct) {
             if (quantity > 0) {
@@ -105,15 +156,28 @@ public class Compartment {
         return 0;
     }
 
+    /**
+     * Removes the stock of product of the container
+     *
+     * @return The old stock
+     */
     public int empty() {
         int removed = this.stock;
         this.stock = 0;
         return removed;
     }
 
+    /**
+     * Changes the product in the container
+     *
+     * @param name New name
+     * @param stock Amount of stock
+     * @param price Product price
+     * @return Old product stock
+     */
     public int newProduct(String name, int stock, int price) {
         int oldStock = empty();
-        if (name.trim().equalsIgnoreCase(" ") || stock > capacity || stock < 0) {
+        if (name.trim().equals("") || stock > capacity || stock < 0) {
             this.name = name;
             this.stock = stock;
             this.hasProduct = true;

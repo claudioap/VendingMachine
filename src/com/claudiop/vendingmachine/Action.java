@@ -17,27 +17,54 @@
 package com.claudiop.vendingmachine;
 
 /**
+ * Represents a vending machine pseudo-action
  *
  * @author Cláudio Pereira
  */
 public class Action {
 
+    /**
+     * The action to execute
+     */
     public ActionType action;
+
+    /**
+     * Details on the action
+     */
     public String parameter;
 
+    /**
+     * Builds an action to execute
+     *
+     * @param action The action to execute
+     * @param parameter Extra detail
+     */
     public Action(ActionType action, String parameter) {
         this.action = action;
         this.parameter = parameter;
     }
 
+    /**
+     * Obtains the action type
+     *
+     * @return ActionType
+     */
     public ActionType type() {
         return this.action;
     }
 
+    /**
+     * Obtains the additional details of the action
+     *
+     * @return
+     */
     public String getParameter() {
         return this.parameter;
     }
 
+    /**
+     * Changes the type of the action from DROP to SHOW
+     */
     public void dropToShow() {
         if (action == ActionType.DROP) {
             this.action = ActionType.SHOW;

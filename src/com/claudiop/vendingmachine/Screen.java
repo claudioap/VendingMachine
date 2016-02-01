@@ -17,6 +17,8 @@
 package com.claudiop.vendingmachine;
 
 /**
+ * Represents a screen used to output information to the user Its optional to
+ * redirect the output to the standard output of the system
  *
  * @author Cláudio Pereira
  */
@@ -25,10 +27,20 @@ public class Screen {
     private String buffer = "";
     private boolean stdout;
 
+    /**
+     * Creates the screen
+     *
+     * @param screenIsStdOut Is the output redirected to the system output?
+     */
     public Screen(boolean screenIsStdOut) {
         this.stdout = screenIsStdOut;
     }
 
+    /**
+     * Abstraction to display the content on a preset place
+     *
+     * @param input
+     */
     public void display(String input) {
         if (!input.equals(this.buffer)) {
             this.buffer = input;
@@ -41,6 +53,11 @@ public class Screen {
         }
     }
 
+    /**
+     * Changes the output location
+     *
+     * @param stdout Output to the system standard output
+     */
     public void setStdout(boolean stdout) {
         this.stdout = stdout;
     }

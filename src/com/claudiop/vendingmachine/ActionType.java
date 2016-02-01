@@ -21,5 +21,6 @@ package com.claudiop.vendingmachine;
  * @author Cláudio Pereira
  */
 public enum ActionType {
+
     SHOW, DROP, CLEAR, ESCALATE, ADD, REMOVE, REPLACE
 }

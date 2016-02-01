@@ -22,6 +22,10 @@ package com.claudiop.vendingmachine;
  */
 public class AppStartup {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         VendingMachine machine = new VendingMachine(123456, 6);
         for (int row = 0; row < 3; row++) {//Create 3 rows

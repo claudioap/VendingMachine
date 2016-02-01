@@ -24,16 +24,29 @@ import java.util.Scanner;
  */
 public class Keyboard {
 
+    /**
+     * Represents the vending machine physical keyboard
+     */
     public boolean embededKeyboard; //So far this can be public
     final private Scanner scanner;
     private String buffer;
     private boolean lockedBuffer;
 
+    /**
+     * Makes the Keyboard
+     *
+     * @param embededKeyboard Is the keyboard physical or stdin?
+     */
     public Keyboard(boolean embededKeyboard) {
         this.scanner = new Scanner(System.in);
         this.embededKeyboard = embededKeyboard;
     }
 
+    /**
+     * Processes the press of a physical button in the machine embedded keyboard
+     *
+     * @param keycode Button keycode
+     */
     public void buttonPress(char keycode) {
 
         if (lockedBuffer) {
@@ -49,6 +62,11 @@ public class Keyboard {
         }
     }
 
+    /**
+     * Reads text from the source
+     *
+     * @return Text read
+     */
     public String read() {
         if (this.embededKeyboard) {
             String result = this.buffer;

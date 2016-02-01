@@ -19,6 +19,8 @@ package com.claudiop.vendingmachine;
 import java.util.ArrayList;
 
 /**
+ * Represents the interpreter of the vending machine, which serves to parse the
+ * keyboard events and generate actions accordingly
  *
  * @author Cláudio Pereira
  */
@@ -30,6 +32,12 @@ public class Interpreter {
     private final String ok;
     private final String cancel;
 
+    /**
+     * Builds an interpreter
+     *
+     * @param continuous Parse of incomplete instructions on real time
+     * @param secret Secret key
+     */
     public Interpreter(boolean continuous, int secret) {
         this.buffer = "";
         this.continuous = continuous;
@@ -38,6 +46,12 @@ public class Interpreter {
         this.cancel = Character.toString((char) 0);//FIXME
     }
 
+    /**
+     * Parses instructions and returns actions
+     *
+     * @param input Input to parse
+     * @return List of actions
+     */
     public ArrayList<Action> parse(String input) {
         if (input.trim().equals("")) {//FIXME isempty
             return new ArrayList<>();
@@ -96,10 +110,20 @@ public class Interpreter {
         return false;
     }
 
+    /**
+     * Sets the interpreter continuous mode
+     *
+     * @param value Continuous mode
+     */
     public void setContinuous(boolean value) {
         this.continuous = value;
     }
 
+    /**
+     * Changes the secret key
+     *
+     * @param secret New secret
+     */
     public void changeSecret(int secret) {
         this.secret = secret;
     }
