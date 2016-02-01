@@ -109,7 +109,7 @@ public class Row {
 
     public int changeProduct(int compartment, String name, int stock, int price) {
         if (this.compartments.containsKey(compartment)) {
-            return this.compartments.get(compartment).newProduct(name, compartment, compartment);
+            return this.compartments.get(compartment).newProduct(name, stock, price);
         }
         System.out.println("Error: There is no such compartment.");
         return 0;

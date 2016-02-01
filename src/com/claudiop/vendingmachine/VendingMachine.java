@@ -30,12 +30,26 @@ public class VendingMachine {
     private HashMap<Character, Row> rows;
     private boolean running;
     private final Keyboard keyboard;
+    private final CardReader cardReader;
     private final Interpreter interpreter;
     private final Screen screen;
     SimpleDateFormat date;
     private boolean root;
     private final int maxRows;
-    private static final String BRANDING = "";
+    private static final String BRANDING
+            = " _   _       _        ____   ___  \n"
+            + "| \\ | | ___ | |_ __ _|___ \\ / _ \\   tm\n"
+            + "|  \\| |/ _ \\| __/ _` | __) | | | |\n"
+            + "| |\\  | (_) | || (_| |/ __/| |_| |\n"
+            + "|_| \\_|\\___/ \\__\\__,_|_____|\\___/ \n"
+            + " _ __ ___   __ _  __ _ _   _(_)_ __   __ _ ___\n"
+            + "| '_ ` _ \\ / _` |/ _` | | | | | '_ \\ / _` / __|\n"
+            + "| | | | | | (_| | (_| | |_| | | | | | (_| \\__ \\\n"
+            + "|_| |_| |_|\\__,_|\\__, |\\__,_|_|_| |_|\\__,_|___/\n"
+            + "  __| | ___  __   __|_| _ __   __| | __ _ \n"
+            + " / _` |/ _ \\ \\ \\ / / _ \\ '_ \\ / _` |/ _` |\n"
+            + "| (_| |  __/  \\ V /  __/ | | | (_| | (_| |\n"
+            + " \\__,_|\\___|   \\_/ \\___|_| |_|\\__,_|\\__,_|";
 
     public VendingMachine(String key, int rows) {
         if (key == null || key.trim().equals("")) {
@@ -54,18 +68,21 @@ public class VendingMachine {
         this.running = false;
         this.keyboard = new Keyboard(false);
         this.screen = new Screen(true);
+        this.screen.display(this.BRANDING);
+        this.cardReader = new CardReader();
         this.date = new SimpleDateFormat("dd-MM ' ' HH:mm:ss");
         this.root = false;
     }
 
     private boolean isWithinRowRange(char row) {
-        return this.maxRows + 64 > (int) (row) && (int) (row) > 64;
+        return this.maxRows > (int) (row - 'A') && (int) (row) >= 'A';
     }
 
-    public void insertRow(char row, int compartments, int compartmentCapacity) {
-        if (!isWithinRowRange(row)) {
+    public void insertRow(char row, int compartments) {
+        if (!(isWithinRowRange(row))) {
+            System.out.println("HARR");
             System.out.println("Error: Invalid row");
-        } else if (compartments > 0 && compartmentCapacity > 0) {
+        } else if (compartments > 0) {
             if (this.rows.containsKey(row)) {
                 System.out.println("Error: Row exists");
             } else {
@@ -86,12 +103,7 @@ public class VendingMachine {
 
     public void insertCompartment(char row, int compartment, int capacity, String product, int stock, int price) {
         if (this.rows.containsKey(row)) {
-            //This is being checked here because it is specific to the vending machine, not to the container
-            if (price < 1000) {
-                this.rows.get(row).addCompartment(compartment, capacity, product, stock, price);
-            } else {
-                System.out.println("Error: The price is too high");
-            }
+            this.rows.get(row).addCompartment(compartment, capacity, product, stock, price);
         } else {
             System.out.println("Error: Invalid row");
         }
@@ -163,11 +175,7 @@ public class VendingMachine {
 
     public void setPrice(char row, int compartment, int price) {
         if (this.rows.containsKey(row)) {
-            if (price < 1000) {
-                this.rows.get(row).setPrice(compartment, price);
-            } else {
-                System.out.println("Error: The price is too high.");
-            }
+            this.rows.get(row).setPrice(compartment, price);
         } else {
             System.out.println("Error: Invalid row");
         }
@@ -183,11 +191,7 @@ public class VendingMachine {
 
     public int changeProduct(char row, int compartment, String product, int stock, int price) {
         if (this.rows.containsKey(row)) {
-            if (price < 1000) {
-                return this.rows.get(row).changeProduct(compartment, product, stock, price);
-            } else {
-                System.out.println("Error: The price is too high.");
-            }
+            return this.rows.get(row).changeProduct(compartment, product, stock, price);
         }
         System.out.println("Error: Invalid row");
         return 0;
@@ -217,11 +221,7 @@ public class VendingMachine {
     private void loop() {
         ArrayList<Action> actionList;
         while (this.running) {
-            takeAction(
-                    this.interpreter.parse(
-                            this.keyboard.read()
-                    )
-            );
+            takeAction(this.interpreter.parse(this.keyboard.read()));
             //Can't implement Thread.sleep(100);
         }
     }
@@ -237,6 +237,18 @@ public class VendingMachine {
                     //TODO Make a way to change to regular user again
                     break;
                 case DROP:
+                    String parameter = action.getParameter();
+                    if (!this.cardReader.hasCard()) {
+                        System.out.println("Error: No card in the machine.");
+                        //write the warning on screen
+                    } else if (this.rows.containsKey(parameter.charAt(0)) && hasProduct(parameter.charAt(0), (int) (parameter.charAt(1) - '0'))) {
+                        System.out.println("Error:There is no such product.");
+                    } else if (this.rows.get(action.getParameter().charAt(0)).hasProduct(maxRows)) {
+
+                    } else {
+                        System.out.println("Error: No such position");
+                        //write the warning on screen
+                    }
                     break;
                 case SHOW:
                     break;

@@ -31,7 +31,6 @@ public class Compartment {
     public Compartment(String product, int price, int stock, int capacity) {
         this.name = product.trim().equals("") ? "Undefined" : product;
         this.price = price > 0 ? price : 0;
-        //TODO validate price < 10€ in the VendingMachine as it is not specific to the Compartment
         this.capacity = capacity > 0 ? capacity : 0;
         if (stock > capacity) {
             this.stock = capacity;

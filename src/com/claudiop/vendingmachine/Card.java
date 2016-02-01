@@ -22,10 +22,19 @@ package com.claudiop.vendingmachine;
  */
 public class Card {
 
+    private final int ID;
     private int credit;
+    private final int MAX_CREDIT;
 
-    public Card(int credit) {
-        this.credit = credit;
+    public Card(int credit, int maxCredit) {
+        if (credit > maxCredit) {
+            this.credit = maxCredit;
+            System.out.println("Warning: Maximum credid exceeded. Remaider not used");
+        } else {
+            this.credit = credit;
+        }
+        this.MAX_CREDIT = maxCredit;
+        this.ID = 0;
     }
 
     public int getCredit() {

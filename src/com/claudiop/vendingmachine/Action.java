@@ -31,11 +31,11 @@ public class Action {
     }
 
     public ActionType type() {
-        return action;
+        return this.action;
     }
 
-    public ActionType getParameter() {
-        return action;
+    public String getParameter() {
+        return this.parameter;
     }
 
     public void changeAction(ActionType action) {

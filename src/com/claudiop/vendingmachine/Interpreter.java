@@ -39,7 +39,7 @@ public class Interpreter {
     }
 
     public ArrayList<Action> parse(String input) {
-        if (input.trim().equals("")) {
+        if (input.trim().equals("")) {//FIXME isempty
             return new ArrayList<>();
         } else {
             this.buffer = this.continuous ? this.buffer + input : input;

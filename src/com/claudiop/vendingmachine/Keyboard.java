@@ -38,16 +38,14 @@ public class Keyboard {
 
         if (lockedBuffer) {
             System.out.println("Processing...");
-        } else {
             //Numbers from 0 to 9 or letters from A to F, Acknowledge/Ok = 10, Cancel = 24
-            if (keycode > 47 && keycode < 58 || keycode > 64 && keycode < 71 || keycode == 24) {
-                this.buffer += keycode;
-            } else if (keycode == 10) {
-                this.lockedBuffer = true;
-                this.buffer += keycode;
-            } else {
-                System.out.println("Warning: Invalid char");
-            }
+        } else if (keycode > 47 && keycode < 58 || keycode > 64 && keycode < 71 || keycode == 24) {
+            this.buffer += keycode;
+        } else if (keycode == 10) {
+            this.lockedBuffer = true;
+            this.buffer += keycode;
+        } else {
+            System.out.println("Warning: Invalid char");
         }
     }
 
