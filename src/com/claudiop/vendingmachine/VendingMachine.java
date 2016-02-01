@@ -30,13 +30,14 @@ public class VendingMachine {
     private final HashMap<Character, Row> ROWS;
     private boolean running = false;
     private final Keyboard KEYBOARD = new Keyboard(false);
-    ;
+    private int credit = 0;
     private final CardReader CARD_READER = new CardReader();
     private final Interpreter INTERPRETER;
     private final Screen SCREEN = new Screen(true);
     SimpleDateFormat date = new SimpleDateFormat("dd-MM ' ' HH:mm:ss");
     private boolean root = false;
     private final int MAX_ROWS;
+    private final int SECRET_KEY;
     private final String BRANDING
             = " _   _       _        ____   ___  \n"
             + "| \\ | | ___ | |_ __ _|___ \\ / _ \\   tm\n"
@@ -52,13 +53,8 @@ public class VendingMachine {
             + "| (_| |  __/  \\ V /  __/ | | | (_| | (_| |\n"
             + " \\__,_|\\___|   \\_/ \\___|_| |_|\\__,_|\\__,_|";
 
-    public VendingMachine(String key, int rows) {
-        if (key == null || key.trim().equals("")) {
-            System.out.println("Error: Invalid key");
-            this.INTERPRETER = new Interpreter(true, "000000");
-        } else {
-            this.INTERPRETER = new Interpreter(true, key);
-        }
+    public VendingMachine(int key, int rows) {
+        this.INTERPRETER = new Interpreter(true, key);
         if (rows > 0 && rows < 26) {
             this.MAX_ROWS = rows;
         } else {
@@ -67,6 +63,7 @@ public class VendingMachine {
         }
         this.ROWS = new HashMap(this.MAX_ROWS);
         this.SCREEN.display(this.BRANDING);
+        this.SECRET_KEY = key;
     }
 
     private boolean isWithinRowRange(char row) {
@@ -89,6 +86,10 @@ public class VendingMachine {
     }
 
     public Row removeRow(char row) {
+        if (!this.root) {
+            System.out.println("Error: Premission denied");
+            return null;
+        }
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.remove(row);
         }
@@ -105,6 +106,10 @@ public class VendingMachine {
     }
 
     public Compartment removeCompartment(char row, int compartment) {
+        if (!this.root) {
+            System.out.println("Error: Premission denied");
+            return null;
+        }
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).removeCompartment(compartment);
         }
@@ -121,6 +126,10 @@ public class VendingMachine {
     }
 
     public boolean dropProduct(char row, int compartment) {
+        if (!this.root) {
+            System.out.println("Error: Premission denied");
+            return false;
+        }
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).dropProduct(compartment);
         }
@@ -177,6 +186,10 @@ public class VendingMachine {
     }
 
     public int refillCompartment(char row, int compartment, int units) {
+        if (!this.root) {
+            System.out.println("Error: Premission denied");
+            return 0;
+        }
         if (this.ROWS.containsKey(row)) {
             return this.ROWS.get(row).refillCompartment(compartment, units);
         }
@@ -238,6 +251,7 @@ public class VendingMachine {
     private void takeAction(ArrayList<Action> actionList) {
         Iterator<Action> iter = actionList.iterator();
         Action action;
+        boolean wasRoot = this.root;
         while (iter.hasNext()) {
             action = iter.next();
             String parameter = action.getParameter();
@@ -262,12 +276,15 @@ public class VendingMachine {
                             this.SCREEN.display("Insira um cartão");
                         } else if (this.CARD_READER.getCredit() >= this.getPrice(row, compartment)) {
                             this.CARD_READER.debit(this.getPrice(row, compartment));
+                            this.credit += this.getPrice(row, compartment);
+                            this.root = true;
                             this.dropProduct(row, compartment);
-                            this.SCREEN.display("Compra efetuada com sucesso."
-                                    + "Volte sempre! 😉");
+                            this.root = wasRoot;
+                            this.SCREEN.display("Compra efetuada com sucesso.\n"
+                                    + "Volte sempre!");
                         } else {
                             this.SCREEN.display("Saldo insuficiente.\n"
-                                    + "O produto custa:" + this.getPrice(row, compartment) / 100.0 + "€"
+                                    + "O produto custa:" + this.getPrice(row, compartment) / 100.0 + "€\n"
                                     + "Dispõe de:" + this.CARD_READER.getCredit() / 100.0 + "€");
                         }
                     } else {
@@ -292,5 +309,67 @@ public class VendingMachine {
                             + "Escolha um produto");
             }
         }
+    }
+
+    public boolean manage(Action action) {
+        if (this.root) {
+            return this.manage(action, this.SECRET_KEY);
+        }
+        System.out.println("Error: Not authenticated");
+        return false;
+    }
+
+    public boolean manage(Action action, int key) {
+        if (key != this.SECRET_KEY) {
+            System.out.println("Error: Invalid key");
+        } else if (action == null) {
+            System.out.println("Error: Invalid action");
+        } else {
+            this.takeAction(action);
+            return true;
+        }
+        return false;
+    }
+
+    public int removeCredit(int amount) {
+        if (this.root) {
+            return this.removeCredit(amount, this.SECRET_KEY);
+        }
+        System.out.println("Error: Not authenticated");
+        return 0;
+    }
+
+    public int removeCredit(int amount, int key) {
+        if (amount < 0) {
+            System.out.println("Error: Invalid amount");
+        } else if (this.SECRET_KEY == key) {
+            if (this.credit < amount) {
+                int temp = this.credit;
+                this.credit = 0;
+                return temp;
+            }
+            this.credit -= amount;
+            return amount;
+        } else {
+            System.out.println("Error: Invalid key");
+        }
+        return 0;
+    }
+
+    public int getCredit() {
+        if (this.root) {
+            return this.getCredit(this.SECRET_KEY);
+        }
+        System.out.println("Error: Not authenticated");
+        return 0;
+    }
+
+    public int getCredit(int key) {
+        if (this.SECRET_KEY == key) {
+            return this.credit;
+        } else {
+            System.out.println("Error: Invalid key");
+        }
+        return 0;
     }
 }

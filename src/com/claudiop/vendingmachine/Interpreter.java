@@ -26,11 +26,11 @@ public class Interpreter {
 
     private String buffer;
     private boolean continuous;
-    private String secret;
+    private int secret;
     private final String ok;
     private final String cancel;
 
-    public Interpreter(boolean continuous, String secret) {
+    public Interpreter(boolean continuous, int secret) {
         this.buffer = "";
         this.continuous = continuous;
         this.secret = secret;
@@ -100,7 +100,7 @@ public class Interpreter {
         this.continuous = value;
     }
 
-    public void changeSecret(String secret) {
+    public void changeSecret(int secret) {
         this.secret = secret;
     }
 

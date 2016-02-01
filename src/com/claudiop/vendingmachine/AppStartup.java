@@ -23,7 +23,7 @@ package com.claudiop.vendingmachine;
 public class AppStartup {
 
     public static void main(String[] args) {
-        VendingMachine machine = new VendingMachine("123456", 6);
+        VendingMachine machine = new VendingMachine(123456, 6);
         for (int row = 0; row < 3; row++) {//Create 3 rows
             machine.insertRow((char) ('A' + row), 5);
             for (int comp = 0; comp < 5; comp++) {//with 5 compartments
@@ -42,7 +42,7 @@ public class AppStartup {
         machine.changeProduct('A', 0, "Banana", 100, 100);
         machine.changeProduct('C', 4, "Apple", 100, 500);
         machine.changeProduct('F', 9, "Orange", 100, 999);
-        //machine.start();
+        machine.start();
     }
 
 }
