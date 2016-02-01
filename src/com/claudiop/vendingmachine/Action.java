@@ -38,15 +38,11 @@ public class Action {
         return this.parameter;
     }
 
-    public void changeAction(ActionType action) {
-        if (action != ActionType.ESCALATE && action != ActionType.SHOW
-                && this.action != ActionType.ESCALATE
-                && this.action != ActionType.SHOW) {
-            this.action = action;
+    public void dropToShow() {
+        if (action == ActionType.DROP) {
+            this.action = ActionType.SHOW;
         } else {
-            System.out.println("Warning: You cant change this action"
-                    + " or an invalid action was requested");
+            System.out.println("Warning: This is not a drop action");
         }
-
     }
 }

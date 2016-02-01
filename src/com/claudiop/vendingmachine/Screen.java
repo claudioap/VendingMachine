@@ -33,7 +33,7 @@ public class Screen {
         if (!input.equals(this.buffer)) {
             this.buffer = input;
             if (this.stdout) {
-                System.out.println(input);
+                System.out.println("Machine:" + input);
             } else {
                 //Connect here to a real screen
                 //Right now it goes to /dev/null, a place where no one shall go

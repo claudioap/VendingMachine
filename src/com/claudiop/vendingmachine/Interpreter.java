@@ -83,7 +83,7 @@ public class Interpreter {
         }
         if (!lastWasOk) {
             this.buffer = userInput[userInput.length - 1];
-            actions.get(actions.size() - 1).changeAction(ActionType.SHOW);
+            actions.get(actions.size() - 1).dropToShow();
         }
         return actions;
     }
